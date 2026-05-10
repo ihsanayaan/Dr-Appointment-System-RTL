@@ -1,155 +1,93 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar";
-import BottomNav from "../components/BottomNav";
-import ProfileDrawer from "../components/ProfileDrawer";
-
+import { useTranslation } from 'react-i18next';
+import { Search, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import Card from "../components/Card";
 export default function Home() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const categories = [
-    "Dentist",
-    "Cardiologist",
-    "Dermatologist",
-    "Orthopedic",
-    "Pediatrician",
-    "Neurologist",
+    { id: 1, name: "General Checkup", nameAr: "فحص عام", icon: "🩺" },
+    { id: 2, name: "Dental Care", nameAr: "العناية بالأسنان", icon: "🦷" },
+    { id: 3, name: "Eye Exam", nameAr: "فحص العيون", icon: "👁️" },
+    { id: 4, name: "Skin Care", nameAr: "العناية بالبشرة", icon: "✨" },
+    { id: 5, name: "Cardiology", nameAr: "أمراض القلب", icon: "❤️" },
+    { id: 6, name: "Orthopedics", nameAr: "جراحة العظام", icon: "🦴" },
   ];
 
-const featuredServices = [
-  {
-    id: 1,
-    name: "General Checkup",
-    price: "$20",
-    rating: 4.5,
-    slots: "5 slots available",
-    image: "https://images.unsplash.com/photo-1580281657527-47f249e8f3c1",
-  },
-  {
-    id: 2,
-    name: "Dental Cleaning",
-    price: "$40",
-    rating: 4.8,
-    slots: "2 slots left",
-    image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db",
-  },
-  {
-    id: 3,
-    name: "Skin Consultation",
-    price: "$30",
-    rating: 4.6,
-    slots: "Available today",
-    image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f",
-  },
-];
+  // ✅ Search Filter Logic
+  const filteredCategories = categories.filter((cat) => {
+    const searchLower = searchQuery.toLowerCase();
+    const name = i18n.language === 'ar' ? cat.nameAr : cat.name;
+    return name.toLowerCase().includes(searchLower);
+  });
 
+  const handleClearSearch = () => {
+    setSearchQuery("");
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 p-4 md:p-6">
+      <div className="container mx-auto max-w-6xl">
+        
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          {t('welcomeTitle')}
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          {t('welcomeSubtitle')}
+        </p>
 
-      {/* Desktop Sidebar */}
-      <Sidebar />
-
-      {/* Mobile Profile Drawer */}
-      <ProfileDrawer
-        isOpen={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-      />
-
-      <main className="flex-1 flex flex-col">
-
-        {/* Topbar with Burger */}
-        <Topbar onMenuClick={() => setDrawerOpen(true)} />
-
-        <div className="p-6 flex-1 overflow-y-auto">
-
-          {/* Search */}
+        {/* ✅ Search with Icon */}
+        <div className="relative mb-8">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
-            placeholder="Search doctors, services..."
-            className="w-full p-4 mb-6 rounded-xl border focus:ring-2 focus:ring-blue-500 outline-none"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t('searchPlaceholder')}
+            className="w-full p-4 pl-12 pr-12 rounded-xl border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
           />
-
-          {/* Categories */}
-          <section className="mb-8">
-            <h2 className="text-lg font-semibold mb-4">
-              Popular Categories
-            </h2>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {categories.map((cat) => (
-                <div
-                  key={cat}
-                  className="bg-white p-4 rounded-xl shadow text-center hover:bg-blue-50 cursor-pointer transition"
-                >
-                  {cat}
-                </div>
-              ))}
-            </div>
-          </section>
-
-      {/* Featured Services */}
-<section className="mt-12">
-  <div className="flex justify-between items-center mb-6">
-    <h2 className="text-xl font-bold">Featured Services</h2>
-    <Link to="/services" className="text-blue-600 text-sm font-medium">
-      View all →
-    </Link>
-  </div>
-
-  <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-    {featuredServices.map((s) => (
-      <div
-        key={s.id}
-        className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
-      >
-        {/* Image */}
-        <div className="h-40 overflow-hidden">
-          <img
-            src={s.image}
-            alt={s.name}
-            className="h-full w-full object-cover group-hover:scale-105 transition duration-300"
-          />
+          {searchQuery && (
+            <button
+              onClick={handleClearSearch}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              <X size={20} />
+            </button>
+          )}
         </div>
 
-        <div className="p-5">
-          {/* Title + Rating */}
-          <div className="flex justify-between items-center">
-            <h3 className="font-semibold text-lg group-hover:text-blue-600">
-              {s.name}
-            </h3>
-            <span className="text-sm text-yellow-500">
-              ⭐ {s.rating}
-            </span>
+        {/* Categories Grid */}
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          {searchQuery ? t('searchResults') : t('categories')}
+        </h2>
+
+        {filteredCategories.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredCategories.map((category) => (
+              <Card
+                key={category.id}
+                onClick={() => navigate(`/services?category=${category.id}`)}
+                className="bg-white dark:bg-zinc-800 rounded-2xl shadow-lg p-6 text-center cursor-pointer hover:shadow-xl hover:scale-105 transition-all"
+              >
+                <div className="text-4xl mb-3">{category.icon}</div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  {i18n.language === 'ar' ? category.nameAr : category.name}
+                </h3>
+              </Card>
+            ))}
           </div>
-
-          {/* Slots */}
-          <p className="text-sm text-green-600 mt-1">
-            {s.slots}
-          </p>
-
-          {/* Price + CTA */}
-          <div className="flex justify-between items-center mt-5">
-            <span className="font-bold text-gray-800">
-              {s.price}
-            </span>
-
-            <Link to="/services">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition">
-                Book Now
-              </button>
-            </Link>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500 dark:text-gray-400 text-lg">
+              {t('noResultsFound')}
+            </p>
           </div>
-        </div>
+        )}
+
       </div>
-    ))}
-  </div>
-</section>
-        </div>
-        {/* Mobile Bottom Nav */}
-        <BottomNav />
-      </main>
     </div>
   );
 }

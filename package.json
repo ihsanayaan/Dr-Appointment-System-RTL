@@ -12,11 +12,15 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "framer-motion": "^12.23.25",
+    "i18next": "^26.0.10",
+    "i18next-browser-languagedetector": "^8.2.1",
     "lucide-react": "^0.552.0",
     "react": "^19.2.0",
     "react-date-picker": "^12.0.1",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.67.0",
+    "react-i18next": "^17.0.7",
+    "react-icons": "^5.6.0",
     "react-router-dom": "^7.9.6",
     "yup": "^1.7.1",
     "zustand": "^5.0.9"
